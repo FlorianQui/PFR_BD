@@ -13,24 +13,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-using Newtonsoft.Json;
-
 namespace LogicielEscapade
 {
     /// <summary>
-    /// Logique d'interaction pour MainWindow.xaml
+    /// Logique d'interaction pour Stats.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class Stats : Page
     {
-        public MainWindow()
+        public Stats()
         {
             InitializeComponent();
-            Connection connection = new Connection();
-
-            List<Client> list = connection.Select("Client", "*");
-
-           
-
         }
     }
 }

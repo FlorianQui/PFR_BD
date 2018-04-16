@@ -6,8 +6,11 @@
         xmlns:local="clr-namespace:LogicielEscapade"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
-    <Grid x:Name="grid">
-        <TextBox x:Name="test" HorizontalAlignment="Left" Height="23" Margin="57,52,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
+    <Grid x:Name="main">
+        <TextBox x:Name="test" HorizontalAlignment="Left" Height="Auto" Margin="390,88,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="Auto"/>
+        <Grid Name="menu" HorizontalAlignment="Left" Width="70">
+
+        </Grid>
 
     </Grid>
 </Window>

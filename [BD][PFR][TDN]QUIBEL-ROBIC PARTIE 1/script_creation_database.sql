@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS `Agence_Escapade`.`Voiture` (
   `marque` VARCHAR(45) NOT NULL,
   `modele` VARCHAR(45) NOT NULL,
   `type` VARCHAR(45) NOT NULL,
-  `nb_place` VARCHAR(45) NOT NULL,
+  `nb_place` INT NOT NULL,
   PRIMARY KEY (`idVoiture`),
   UNIQUE INDEX `idVoiture_UNIQUE` (`idVoiture` ASC))
 ENGINE = InnoDB;

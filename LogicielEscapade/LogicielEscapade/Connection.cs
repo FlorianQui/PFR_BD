@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
+using Newtonsoft.Json;
 
 namespace LogicielEscapade
 {
@@ -19,25 +20,42 @@ namespace LogicielEscapade
             this.GetSetConnection = new MySqlConnection(conStr);
         }
 
-        public List<string> Select(string table)
+        public List<Client> Select(string table, string critere)
         {
-            this.GetSetConnection.OpenAsync();
+            this.GetSetConnection.Open();
 
             MySqlCommand req = this.GetSetConnection.CreateCommand();
-            req.CommandText = "SELECT * FROM " + table;
+            req.CommandText = "SELECT " + critere + " FROM " + table;
 
-            List<string> list = new List<string>();
+            Type type = Type.GetType(table);
 
-            MySqlDataReader reader = req.ExecuteReader();
+            //if (type != null)
+            //{
+                List<Client> list = new List<Client>();
+                MySqlDataReader reader = req.ExecuteReader();
 
-            //this.GetSetConnection.CloseAsync();
+                //while (reader.Read())
+                //{
+                //    object[] arg = new object[reader.FieldCount - 1];
+                //    for (int i = 0; i < reader.FieldCount; i++)
+                //    {
+                //        arg[i] = reader.GetValue(i);
+                //    }
+                //    dynamic obj = Activator.CreateInstance(type, arg);
+                //    list.Add(obj);
+                //}
 
-            while (reader.Read())
-            {
-                list.Add(reader.GetString(1));
-            }
+                while(reader.Read())
+                {
+                    list.Add(new Client(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4)));
+                }
 
-            return list;
+                this.GetSetConnection.Close();
+                return list;
+            //}
+            //else return null;
+
+            
         }
     }
 }
