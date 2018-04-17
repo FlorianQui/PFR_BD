@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Agence_Escapade
 {
@@ -23,5 +24,10 @@ namespace Agence_Escapade
 
         public int IdLocation { get => idLocation; set => idLocation = value; }
         public Voiture Voiture { get => voiture; set => voiture = value; }
+
+        public override string ToString()
+        {
+            return "[LOCATION] \n" + JsonConvert.SerializeObject(this) + "\n\n";
+        }
     }
 }

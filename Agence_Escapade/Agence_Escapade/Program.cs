@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using MySql.Data.MySqlClient;
+using System.Diagnostics;
 
 namespace Agence_Escapade
 {
@@ -13,13 +15,11 @@ namespace Agence_Escapade
         static void Main(string[] args)
         {
             Client c = new Client(98, "flo", "qui","09", null);
-            Sejour sejour = new Sejour(c, "theme",12 , DateTime.Now, DateTime.Now);
+            Sejour sejour = new Sejour(c, "theme", 1, DateTime.Now, DateTime.Now);
 
-            sejour.BookVoiture();
+            //Console.WriteLine(sejour.CheckVoiture());
 
-            //sejour.ConfirmationSejour();
-
-            Console.WriteLine(sejour.ConfirmationSejourJSON());
+           
 
             
             Console.ReadKey();

@@ -7,6 +7,7 @@ using MySql.Data.MySqlClient;
 using System.Xml.Serialization;
 using Newtonsoft.Json;
 using System.IO;
+using System.Diagnostics;
 
 
 
@@ -52,7 +53,7 @@ namespace Agence_Escapade
 
             int resp = connection.CommandCount("select * from voiture where voiture.idVoiture = " +
                 "(select idVoiture from stationnement where stationnement.idParking = " +
-                "(select parking.idParking from parking where parking.arrondissement_parking = " + this.Arrondissment_sejour + ")) limit 1;");
+                "(select parking.idParking from parking where parking.arrondissement_parking = 12)) limit 1;");
 
 
             return resp > 0 ? true : false;
@@ -72,51 +73,58 @@ namespace Agence_Escapade
                 "(select idVoiture from stationnement where stationnement.idParking = " +
                 "(select parking.idParking from parking where parking.arrondissement_parking = " + this.Arrondissment_sejour + ")) limit 1;");
 
-            if (this.CheckVoiture())
+            Voiture voiture;
+            if (resp.Read())
             {
-                Voiture voiture;
-                if (resp.Read())
-                {
-                    voiture = new Voiture(resp.GetString(1), resp.GetString(2), resp.GetString(3), resp.GetString(4), resp.GetInt32(5));
-                    this.Location = new Location(voiture);
+                Debug.WriteLine("Creation voiture..");
+                voiture = new Voiture(resp.GetString(1), resp.GetString(2), resp.GetString(3), resp.GetString(4), resp.GetInt32(5));
+                this.Location = new Location(voiture);
 
-                    resp.Close();
+                Console.WriteLine(JsonConvert.SerializeObject(location, Formatting.Indented));
 
-                    connection.CommandCount("DELETE FROM stationnement WHERE stationnement.idVoiture = (SELECT idVoiture FROM voiture WHERE immat = " + voiture.Immat);
-                    connection.CommandCount("INSERT INTO location (idVoiture) VALUES ( SELECT idVoiture FROM voiture WHERE immat = " + voiture.Immat);
-                }
+                resp.Close();
+
+                connection.GetSetConnection.Close();
+
+                connection.CommandCount("DELETE FROM stationnement WHERE stationnement.idVoiture = (SELECT idVoiture FROM voiture WHERE immat = '" + voiture.Immat + "');");
+
+                connection.CommandCount("INSERT INTO location (idVoiture) VALUES ( (SELECT idVoiture FROM voiture WHERE immat = '" + voiture.Immat + "'));");
 
 
             }
-
+            else Console.WriteLine("Aucune voiture dispo ...");
             connection.GetSetConnection.Close();
-
         }
 
-        public bool SejourRealisable()
-        {
-            return this.CheckVoiture() ? true : false;
-        }
+    public bool SejourRealisable()
+    {
+        return this.CheckVoiture() ? true : false;
+    }
 
-        public string ConfirmationSejourXML()
-        {
-            return JsonConvert.DeserializeXNode(this.ConfirmationSejourJSON(), "Sejour").ToString();
-        }
+    public string ConfirmationSejourXML()
+    {
+        return JsonConvert.DeserializeXNode(this.ConfirmationSejourJSON(), "Sejour").ToString();
+    }
 
-        public string ConfirmationSejourJSON()
-        {
-            return JsonConvert.SerializeObject(this, Formatting.Indented);
-        }
+    public string ConfirmationSejourJSON()
+    {
+        return JsonConvert.SerializeObject(this, Formatting.Indented);
+    }
 
-        public void ConfirmationSejour()
-        {
-            //if ( this.SejourRealisable() )
-            //{
-            //    this.BookVoiture();
-            //}
-            //else Console.WriteLine("Sejour irrealisable");
+    public void ConfirmationSejour()
+    {
+        //if ( this.SejourRealisable() )
+        //{
+        //    this.BookVoiture();
+        //}
+        //else Console.WriteLine("Sejour irrealisable");
 
-            this.BookVoiture();
+        this.BookVoiture();
+    }
+
+        public override string ToString()
+        {
+            return "[SEJOUR] \n" + JsonConvert.SerializeObject(this, Formatting.Indented) + "\n\n";
         }
     }
 }
