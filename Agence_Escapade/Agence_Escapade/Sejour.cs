@@ -8,8 +8,7 @@ using System.Xml.Serialization;
 using Newtonsoft.Json;
 using System.IO;
 using System.Diagnostics;
-
-
+using Newtonsoft.Json.Linq;
 
 namespace Agence_Escapade
 {
@@ -59,10 +58,23 @@ namespace Agence_Escapade
             return resp > 0 ? true : false;
         }
 
-        public bool CheckLogement()
+        public void BookLogement()
         {
-            //TODO check logement
-            return true;
+            StreamReader jsonreader = new StreamReader("RBNP.json");
+            string rbnp = File.ReadAllText("RBNP.json");
+
+            //Console.WriteLine(rbnp);
+            JArray jObject = JArray.Parse(rbnp);
+            var logement = from l in jObject
+                           where l["availability"].ToString() == "yes" && l["borough"].ToString() == this.Arrondissment_sejour.ToString() && l["bedrooms"].ToString() == "1" && Convert.ToInt32(l["overall_satisfaction"]) >= 4.5
+                           select l;
+
+            foreach (object s in logement.ToList()[0])
+            {
+                Console.WriteLine(s.ToString());
+            }
+
+            //Console.WriteLine(logement.ToString());
         }
 
         public void BookVoiture()
@@ -90,9 +102,26 @@ namespace Agence_Escapade
 
                 connection.CommandCount("INSERT INTO location (idVoiture) VALUES ( (SELECT idVoiture FROM voiture WHERE immat = '" + voiture.Immat + "'));");
 
-
+                connection.GetSetConnection.Close();
             }
-            else Console.WriteLine("Aucune voiture dispo ...");
+            else
+            {
+                Console.WriteLine("Aucune voiture dispo dans l'arrondissemnt");
+
+                resp.Close();
+
+                connection.GetSetConnection.Close();
+
+                MySqlDataReader reader = connection.Command("SELECT * FROM voiture WHERE voiture.idVoiture = (SELECT idVoiture FROM stationnement LIMIT 1);");
+
+                reader.Read();
+                voiture = new Voiture(reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetInt32(5));
+                this.Location = new Location(voiture);
+
+                Console.WriteLine(JsonConvert.SerializeObject(location, Formatting.Indented));
+
+                reader.Close();
+            }
             connection.GetSetConnection.Close();
         }
 
@@ -127,4 +156,6 @@ namespace Agence_Escapade
             return "[SEJOUR] \n" + JsonConvert.SerializeObject(this, Formatting.Indented) + "\n\n";
         }
     }
+
+
 }

@@ -36,5 +36,24 @@ namespace Agence_Escapade
         {
             return "[CLIENT] \n" + JsonConvert.SerializeObject(this) + "\n\n";
         }
+
+        public bool isClient()
+        {
+            bool result = false;
+            Connection connection = new Connection();
+
+            if (connection.CommandCount("SELECT * FROM client where nom = '" + this.Nom + "'") >= 1) result = true;
+
+            return result;
+        }
+
+        public void CheckClient()
+        {
+            if( !isClient() )
+            {
+                Connection connection = new Connection();
+                connection.Command("INSERT INTO client (nom, prenom, telephone, email) VALUES ('" + this.Nom + "','" + this.Prenom + "','" + this.Telephone + "','" + this.Email + "');");
+            }
+        }
     }
 }

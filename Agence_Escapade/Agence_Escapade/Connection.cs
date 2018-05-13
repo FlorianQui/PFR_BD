@@ -16,7 +16,7 @@ namespace Agence_Escapade
 
         public Connection()
         {
-            string conStr = "SERVER=localhost;Port=3306;DATABASE=agence_escapade; UID=root; PASSWORD=Flqu970220";
+            string conStr = "SERVER=localhost;Port=3306;DATABASE=agence_escapade; UID=root; PASSWORD=Flqu970220; SslMode=none";
             this.GetSetConnection = new MySqlConnection(conStr);
         }
 
@@ -35,18 +35,13 @@ namespace Agence_Escapade
 
         public int CommandCount(string req)
         {
+            MySqlDataReader reader = this.Command(req);
 
-            this.GetSetConnection.Open();
+            int result = 0;
 
-            MySqlCommand command = this.GetSetConnection.CreateCommand();
+            while (reader.Read()) result++;
 
-            command.CommandText = req;
-
-            
-
-            int result = command.ExecuteNonQuery();
-
-            Console.WriteLine(result);
+            reader.Close();
 
             this.GetSetConnection.Close();
 
