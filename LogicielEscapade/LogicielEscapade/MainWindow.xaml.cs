@@ -27,7 +27,9 @@ namespace LogicielEscapade
             InitializeComponent();
             Connection connection = new Connection();
 
-            List<Client> list = connection.Select("Client", "*");
+            test.Text = connection.GetSetConnection.GetSchema().ToString();
+
+            //List<Client> list = connection.Select("Client", "*");
 
            
 
