@@ -71,10 +71,12 @@ namespace Agence_Escapade
 
             foreach (object s in logement.ToList()[0])
             {
-                Console.WriteLine(s.ToString());
+                string json = "";
+                //Logement mylLogement = JsonConvert.DeserializeObject<Logement>(json);
+                //mylLogement.ToString();
+                //TODO
+                Console.WriteLine(json);
             }
-
-            //Console.WriteLine(logement.ToString());
         }
 
         public void BookVoiture()
