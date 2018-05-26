@@ -51,6 +51,7 @@ namespace Agence_Escapade
         {
             if( !isClient() )
             {
+                Console.WriteLine("Vous n'etes pas client, donc vous allez etre enregistre");
                 Connection connection = new Connection();
                 connection.Command("INSERT INTO client (nom, prenom, telephone, email) VALUES ('" + this.Nom + "','" + this.Prenom + "','" + this.Telephone + "','" + this.Email + "');");
             }

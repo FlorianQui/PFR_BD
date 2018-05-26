@@ -44,6 +44,8 @@ namespace Agence_Escapade
             this.Arrondissment_sejour = arrondissment_sejour;
             this.Date_debut = date_debut;
             this.Date_fin = date_fin;
+
+            EstConfirme = false;
         }
 
         public bool CheckVoiture()
@@ -60,8 +62,8 @@ namespace Agence_Escapade
 
         public void BookLogement()
         {
-            StreamReader jsonreader = new StreamReader("RBNP.json");
-            string rbnp = File.ReadAllText("RBNP.json");
+            string listingPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName;
+            string rbnp = File.ReadAllText(listingPath + "/RBNP.json");
 
             //Console.WriteLine(rbnp);
             JArray jObject = JArray.Parse(rbnp);
@@ -69,14 +71,9 @@ namespace Agence_Escapade
                            where l["availability"].ToString() == "yes" && l["borough"].ToString() == this.Arrondissment_sejour.ToString() && l["bedrooms"].ToString() == "1" && Convert.ToInt32(l["overall_satisfaction"]) >= 4.5
                            select l;
 
-            foreach (object s in logement.ToList()[0])
-            {
-                string json = "";
-                //Logement mylLogement = JsonConvert.DeserializeObject<Logement>(json);
-                //mylLogement.ToString();
-                //TODO
-                Console.WriteLine(json);
-            }
+            Logement mylLogement = JsonConvert.DeserializeObject<Logement>(logement.ToList()[0].ToString());
+            Console.WriteLine(mylLogement.ToString());
+            this.Logement = mylLogement;
         }
 
         public void BookVoiture()
@@ -127,37 +124,40 @@ namespace Agence_Escapade
             connection.GetSetConnection.Close();
         }
 
-    public bool SejourRealisable()
-    {
-        return this.CheckVoiture() ? true : false;
-    }
+        public bool SejourRealisable()
+        {
+            return this.CheckVoiture() ? true : false;
+        }
 
-    public string ConfirmationSejourXML()
-    {
-        return JsonConvert.DeserializeXNode(this.ConfirmationSejourJSON(), "Sejour").ToString();
-    }
+        public void ConfirmationSejourNonConfirme()
+        {
 
-    public string ConfirmationSejourJSON()
-    {
-        return JsonConvert.SerializeObject(this, Formatting.Indented);
-    }
+        }
 
-    public void ConfirmationSejour()
-    {
-        //if ( this.SejourRealisable() )
-        //{
-        //    this.BookVoiture();
-        //}
-        //else Console.WriteLine("Sejour irrealisable");
+        public string ConfirmationSejourXML()
+        {
+            return JsonConvert.DeserializeXNode(this.ConfirmationSejourJSON(), "Sejour").ToString();
+        }
 
-        this.BookVoiture();
-    }
+        public string ConfirmationSejourJSON()
+        {
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
+        }
+
+        public void ConfirmationSejour()
+        {
+            //if ( this.SejourRealisable() )
+            //{
+            //    this.BookVoiture();
+            //}
+            //else Console.WriteLine("Sejour irrealisable");
+
+            this.BookVoiture();
+        }
 
         public override string ToString()
         {
             return "[SEJOUR] \n" + JsonConvert.SerializeObject(this, Formatting.Indented) + "\n\n";
         }
     }
-
-
 }
