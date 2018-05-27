@@ -14,8 +14,15 @@ namespace Agence_Escapade
     {
         static void Main(string[] args)
         {
+            Console.WriteLine("Autheur : QUIBEL Florian / ROBIC Gaetan \nTDN");
             Client c = new Client(1, "Junot", "Gerard", "0", "");
             Sejour sejour = new Sejour(c, "theme", 16, DateTime.Now, DateTime.Now);
+
+            DemandeSejour demandeSejour = new DemandeSejour(c, sejour);
+            Console.WriteLine("[DEMANDE SEJOUR]");
+            Console.WriteLine(demandeSejour.ToString());
+            Console.ReadKey();
+            Console.Clear();
 
             Console.WriteLine("[CHECK CLIENT]\n\n");
             c.CheckClient();
@@ -39,6 +46,17 @@ namespace Agence_Escapade
 
             Console.WriteLine("[VALIDATION SEJOUR]\n\n");
             sejour.ConfirmationSejour();
+            Console.ReadKey();
+            Console.Clear();
+
+            Console.WriteLine("[FIN SEJOUR]\n\n");
+            sejour.FinSejour();
+            Console.ReadKey();
+            Console.Clear();
+
+            Console.WriteLine("[Statistiques]\n\n");
+            Voiture voiture = new Voiture("75AZ92", "", "", "", 0);
+            voiture.NbMaintenance();
             Console.ReadKey();
             Console.Clear();
         }

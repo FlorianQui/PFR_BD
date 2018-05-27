@@ -76,6 +76,10 @@ namespace Agence_Escapade
 
             Logement mylLogement = JsonConvert.DeserializeObject<Logement>(logement.ToList()[0].ToString());
             this.Logement = mylLogement;
+
+            ReponseRBNP reponseRBNP = new ReponseRBNP(this.Logement.Room_id, this.Logement.Room_id);
+
+            Console.WriteLine("[REPONSE RBNP]\n" + reponseRBNP.ToString());
         }
 
         public void BookVoiture()
@@ -118,7 +122,6 @@ namespace Agence_Escapade
                 {
                     voiture = new Voiture(reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetInt32(5));
                     this.Location = new Location(voiture);
-                    this.Location.IdLocation = reader.GetInt32(0);
 
                     reader.Close();
 
@@ -157,7 +160,7 @@ namespace Agence_Escapade
 
             Connection connection = new Connection();
 
-            connection.CommandCount("INSERT INTO sejour(idClient,idLocation,`theme`,`date_debut`,`date_fin`,`arrondissement_sejour`, confirme) VALUES (" +
+            connection.CommandCount("INSERT INTO sejour (idClient,idLocation,`theme`,`date_debut`,`date_fin`,`arrondissement_sejour`, confirme) VALUES (" +
                 "(select client.idClient from client where client.nom = '" + this.Client.Nom + "')," +
                 "(select location.idLocation from location where location.idVoiture = (select idVoiture from voiture where voiture.immat = '" + this.Location.Voiture.Immat + "' LIMIT 1) LIMIT 1),'" +
                 this.Theme + "','" +
@@ -167,6 +170,61 @@ namespace Agence_Escapade
                 this.EstConfirme.ToString() + ");");
 
             connection.GetSetConnection.Close();
+
+            MySqlDataReader reader3 = connection.Command("select idSejour from sejour where idClient = (select idClient from client where nom = '" + this.Client.Nom + "') order by idClient DESC limit 1;");
+
+            reader3.Read();
+            this.IdSejour = reader3.GetInt32(0);
+
+            Console.WriteLine(this.IdSejour);
+
+            connection.GetSetConnection.Close();
+
+            MySqlDataReader reader2 = connection.Command("select idLocation from sejour where idSejour = '" + this.IdSejour + "'");
+
+            reader2.Read();
+            this.Location.IdLocation = reader2.GetInt32(0);
+
+            connection.GetSetConnection.Close();
+
+            Console.WriteLine(this.Location.IdLocation);
+
+            MySqlDataReader reader = connection.Command("select idSejour from sejour where sejour.idLocation = '" + this.Location.IdLocation + "' limit 1;");
+
+            if (reader.Read())
+            {
+                this.IdSejour = reader.GetInt32(0);
+            }
+            else
+            {
+                Console.WriteLine("pb idSejour");
+            }
+            connection.GetSetConnection.Close();
+        }
+
+        public void FinSejour()
+        {
+            Connection connection = new Connection();
+
+            connection.CommandCount("DELETE FROM sejour WHERE sejour.idSejour = '" + this.IdSejour + "';");
+
+            connection.GetSetConnection.Close();
+
+            connection.CommandCount("DELETE FROM location WHERE location.idVoiture = (select idVoiture from voiture where voiture.immat = '" + this.Location.Voiture.Immat + "');");
+
+            connection.GetSetConnection.Close();
+
+            Connection connection2 = new Connection();
+
+            connection2.CommandCount("insert into stationnement (idParking, idVoiture, numPlace) values ('" + this.Arrondissment_sejour + "', (select idVoiture from voiture where voiture.immat = '" + this.Location.Voiture.Immat + "'), 'A1')");
+
+            connection2.GetSetConnection.Close();
+
+            Console.WriteLine("[FIN SEJOUR]\nMise en stationnement de la voiture sur place A1\nMise en maintenance de la voiture");
+
+            this.Location.Voiture.MettreEnMaintenance("fin sejour");
+
+            
         }
 
         public string ConfirmationSejourXML()
@@ -186,8 +244,6 @@ namespace Agence_Escapade
             ValidationClient validationClient = new ValidationClient(this.IdSejour, this.EstConfirme);
             string validation = JsonConvert.DeserializeXNode(validationClient.ToString(), "ValidationSejour").ToString();
 
-            Console.WriteLine(validation + "\n\n");
-
             string listingPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName;
 
             Console.WriteLine(ConfirmationSejourXML());
@@ -195,6 +251,8 @@ namespace Agence_Escapade
             File.WriteAllText(listingPath + "/ConfirmationSejourConfirme.xml", ConfirmationSejourXML());
 
             Connection connection = new Connection();
+
+            connection.Command("UPDATE sejour SET confirme = 1 where idSejour = '" + this.IdSejour + "';");
 
             connection.GetSetConnection.Close();
         }
@@ -218,6 +276,48 @@ namespace Agence_Escapade
 
         public int IdSejour { get => idSejour; set => idSejour = value; }
         public bool Confirmation { get => confirmation; set => confirmation = value; }
+
+        public override string ToString()
+        {
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
+        }
+    }
+
+    public class DemandeSejour
+    {
+        private Client client;
+        private Sejour sejour;
+
+        public DemandeSejour(Client client, Sejour sejour)
+        {
+            this.Client = client;
+            this.Sejour = sejour;
+        }
+
+        public Client Client { get => client; set => client = value; }
+        public Sejour Sejour { get => sejour; set => sejour = value; }
+
+        public override string ToString()
+        {
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
+        }
+    }
+
+    public class ReponseRBNP
+    {
+        private int host_id, room_id;
+        private string avaibility;
+
+        public ReponseRBNP(int host_id, int room_id)
+        {
+            this.Host_id = host_id;
+            this.Room_id = room_id;
+            this.Avaibility = "no";
+        }
+
+        public int Host_id { get => host_id; set => host_id = value; }
+        public int Room_id { get => room_id; set => room_id = value; }
+        public string Avaibility { get => avaibility; set => avaibility = value; }
 
         public override string ToString()
         {

@@ -5,15 +5,15 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 
 -- -----------------------------------------------------
--- Schema Agence_Escapadeclientclientmaintenancemaintenancesejour
+-- Schema quib_florclientclientmaintenancemaintenancesejour
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `Agence_Escapade` DEFAULT CHARACTER SET utf8 ;
-USE `Agence_Escapade` ;
+CREATE SCHEMA IF NOT EXISTS `quib_flor` DEFAULT CHARACTER SET utf8 ;
+USE `quib_flor` ;
 
 -- -----------------------------------------------------
--- Table `Agence_Escapade`.`Client`
+-- Table `quib_flor`.`Client`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Agence_Escapade`.`Client` (
+CREATE TABLE IF NOT EXISTS `quib_flor`.`Client` (
   `idClient` INT NOT NULL AUTO_INCREMENT,
   `nom` VARCHAR(45) NOT NULL,
   `prenom` VARCHAR(45) NOT NULL,
@@ -25,9 +25,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `Agence_Escapade`.`Voiture`
+-- Table `quib_flor`.`Voiture`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Agence_Escapade`.`Voiture` (
+CREATE TABLE IF NOT EXISTS `quib_flor`.`Voiture` (
   `idVoiture` INT NOT NULL AUTO_INCREMENT,
   `immat` VARCHAR(6) NOT NULL,
   `marque` VARCHAR(45) NOT NULL,
@@ -40,24 +40,24 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `Agence_Escapade`.`Location`
+-- Table `quib_flor`.`Location`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Agence_Escapade`.`Location` (
+CREATE TABLE IF NOT EXISTS `quib_flor`.`Location` (
   `idLocation` INT NOT NULL AUTO_INCREMENT,
   `idVoiture` INT NOT NULL,
   PRIMARY KEY (`idLocation`),
   INDEX `idVoiture_idx` (`idVoiture` ASC),
   CONSTRAINT `idVoiture_location`
     FOREIGN KEY (`idVoiture`)
-    REFERENCES `Agence_Escapade`.`Voiture` (`idVoiture`)
+    REFERENCES `quib_flor`.`Voiture` (`idVoiture`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 -- -----------------------------------------------------
--- Table `agence_escapade`.`Logement`
+-- Table `quib_flor`.`Logement`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `agence_escapade`.`Logement` (
+CREATE TABLE IF NOT EXISTS `quib_flor`.`Logement` (
   `idLogement` INT NOT NULL AUTO_INCREMENT,
   `arrondissement_logement` VARCHAR(45) NULL,
   `Adresse` VARCHAR(100) NULL,
@@ -66,9 +66,9 @@ CREATE TABLE IF NOT EXISTS `agence_escapade`.`Logement` (
 ENGINE = InnoDB;
 
 -- -----------------------------------------------------
--- Table `Agence_Escapade`.`Sejour`
+-- Table `quib_flor`.`Sejour`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Agence_Escapade`.`Sejour` (
+CREATE TABLE IF NOT EXISTS `quib_flor`.`Sejour` (
   `idSejour` INT NOT NULL AUTO_INCREMENT,
   `idClient` INT NOT NULL,
   `idLocation` INT NOT NULL,
@@ -87,26 +87,26 @@ CREATE TABLE IF NOT EXISTS `Agence_Escapade`.`Sejour` (
   INDEX `idLogement_idx` (`idLogement` ASC),
   CONSTRAINT `idClient`
     FOREIGN KEY (`idClient`)
-    REFERENCES `Agence_Escapade`.`Client` (`idClient`)
+    REFERENCES `quib_flor`.`Client` (`idClient`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `idLocation`
     FOREIGN KEY (`idLocation`)
-    REFERENCES `Agence_Escapade`.`Location` (`idLocation`)
+    REFERENCES `quib_flor`.`Location` (`idLocation`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `idLogement`
     FOREIGN KEY (`idLogement`)
-    REFERENCES `Agence_Escapade`.`Logement` (`idLogement`)
+    REFERENCES `quib_flor`.`Logement` (`idLogement`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `Agence_Escapade`.`Parking`
+-- Table `quib_flor`.`Parking`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Agence_Escapade`.`Parking` (
+CREATE TABLE IF NOT EXISTS `quib_flor`.`Parking` (
   `idParking` INT NOT NULL AUTO_INCREMENT,
   `nom` VARCHAR(45) NOT NULL,
   `adresse` VARCHAR(45) NOT NULL,
@@ -116,9 +116,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `Agence_Escapade`.`Controlleur`
+-- Table `quib_flor`.`Controlleur`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Agence_Escapade`.`Controlleur` (
+CREATE TABLE IF NOT EXISTS `quib_flor`.`Controlleur` (
   `idControlleur` INT NOT NULL AUTO_INCREMENT,
   `nom` VARCHAR(45) NULL,
   PRIMARY KEY (`idControlleur`))
@@ -126,9 +126,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `Agence_Escapade`.`Maintenance`
+-- Table `quib_flor`.`Maintenance`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Agence_Escapade`.`Maintenance` (
+CREATE TABLE IF NOT EXISTS `quib_flor`.`Maintenance` (
   `idMaintenance` INT NOT NULL AUTO_INCREMENT,
   `idVoiture` INT NOT NULL,
   `idControlleur` INT NOT NULL,
@@ -139,21 +139,21 @@ CREATE TABLE IF NOT EXISTS `Agence_Escapade`.`Maintenance` (
   INDEX `idControlleur_idx` (`idControlleur` ASC),
   CONSTRAINT `idVoiture_maintenance`
     FOREIGN KEY (`idVoiture`)
-    REFERENCES `Agence_Escapade`.`Voiture` (`idVoiture`)
+    REFERENCES `quib_flor`.`Voiture` (`idVoiture`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `idControlleur`
     FOREIGN KEY (`idControlleur`)
-    REFERENCES `Agence_Escapade`.`Controlleur` (`idControlleur`)
+    REFERENCES `quib_flor`.`Controlleur` (`idControlleur`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `Agence_Escapade`.`Stationnement`
+-- Table `quib_flor`.`Stationnement`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Agence_Escapade`.`Stationnement` (
+CREATE TABLE IF NOT EXISTS `quib_flor`.`Stationnement` (
   `idStationnement` INT NOT NULL AUTO_INCREMENT,
   `idParking` INT NOT NULL,
   `idVoiture` INT NOT NULL,
@@ -163,12 +163,12 @@ CREATE TABLE IF NOT EXISTS `Agence_Escapade`.`Stationnement` (
   UNIQUE INDEX `idVoiture_UNIQUE` (`idVoiture` ASC),
   CONSTRAINT `idParking`
     FOREIGN KEY (`idParking`)
-    REFERENCES `Agence_Escapade`.`Parking` (`idParking`)
+    REFERENCES `quib_flor`.`Parking` (`idParking`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `idVoiture_stationnement`
     FOREIGN KEY (`idVoiture`)
-    REFERENCES `Agence_Escapade`.`Voiture` (`idVoiture`)
+    REFERENCES `quib_flor`.`Voiture` (`idVoiture`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;

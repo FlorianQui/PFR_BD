@@ -16,7 +16,8 @@ namespace Agence_Escapade
 
         public Connection()
         {
-            string conStr = "SERVER=localhost;Port=3306; DATABASE=agence_escapade; UID=root; PASSWORD=Flqu970220; SslMode=none";
+            string conStr = "SERVER=fboisson.ddns.net;Port=3306; DATABASE=quib_flor; UID=S6-QUIB-FLOR; PASSWORD=8274; SslMode=none";
+            
             this.GetSetConnection = new MySqlConnection(conStr);
         }
 
