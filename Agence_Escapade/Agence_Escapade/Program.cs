@@ -14,17 +14,19 @@ namespace Agence_Escapade
     {
         static void Main(string[] args)
         {
-            Client c = new Client(1, "Junot", "Gerard", "0", null);
+            Client c = new Client(1, "Junot", "Gerard", "0", "");
             Sejour sejour = new Sejour(c, "theme", 16, DateTime.Now, DateTime.Now);
 
             //Console.Write(c.isClient());
 
             //c.CheckClient();
 
-            //sejour.BookVoiture();
+            sejour.BookVoiture();
             sejour.BookLogement();
 
             //Console.WriteLine(sejour.CheckVoiture());
+
+            sejour.ConfirmationSejourNonConfirme();
 
            
 

@@ -19,7 +19,7 @@ namespace Agence_Escapade
         private Logement logement;
         private string theme;
         private bool estConfirme;
-        private int note_client, nbVoyageurs, arrondissment_sejour;
+        private int note_client, nbVoyageurs, arrondissment_sejour, idSejour;
         private DateTime date_debut, date_fin;
 
         public Client Client { get => client; set => client = value; }
@@ -30,6 +30,7 @@ namespace Agence_Escapade
         public int Note_client { get => note_client; set => note_client = value; }
         public int NbVoyageurs { get => nbVoyageurs; set => nbVoyageurs = value; }
         public int Arrondissment_sejour { get => arrondissment_sejour; set => arrondissment_sejour = value; }
+        public int IdSejour { get => idSejour; set => idSejour = value; }
         public DateTime Date_debut { get => date_debut; set => date_debut = value; }
         public DateTime Date_fin { get => date_fin; set => date_fin = value; }
 
@@ -72,7 +73,6 @@ namespace Agence_Escapade
                            select l;
 
             Logement mylLogement = JsonConvert.DeserializeObject<Logement>(logement.ToList()[0].ToString());
-            Console.WriteLine(mylLogement.ToString());
             this.Logement = mylLogement;
         }
 
@@ -90,8 +90,6 @@ namespace Agence_Escapade
                 Debug.WriteLine("Creation voiture..");
                 voiture = new Voiture(resp.GetString(1), resp.GetString(2), resp.GetString(3), resp.GetString(4), resp.GetInt32(5));
                 this.Location = new Location(voiture);
-
-                Console.WriteLine(JsonConvert.SerializeObject(location, Formatting.Indented));
 
                 resp.Close();
 
@@ -117,8 +115,6 @@ namespace Agence_Escapade
                 voiture = new Voiture(reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetInt32(5));
                 this.Location = new Location(voiture);
 
-                Console.WriteLine(JsonConvert.SerializeObject(location, Formatting.Indented));
-
                 reader.Close();
             }
             connection.GetSetConnection.Close();
@@ -131,7 +127,24 @@ namespace Agence_Escapade
 
         public void ConfirmationSejourNonConfirme()
         {
+            string listingPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName;
 
+            Console.WriteLine(ConfirmationSejourXML());
+
+            File.WriteAllText(listingPath + "/ConfirmationSejourNonConfirme.xml", ConfirmationSejourXML());
+
+            Connection connection = new Connection();
+
+            connection.CommandCount("INSERT INTO sejour(idClient,`idLocation`,`theme`,`date_debut`,`date_fin`,`arrondissement_sejour`, confirme) VALUES(" +
+                "(select client.idClient from client where client.nom = '" + this.Client.Nom + "')," +
+                "(select location.idLocation from location where location.immat = '" + this.Location.Voiture.Immat + "'),'" +
+                this.Theme + "','" +
+                this.Date_debut + "','" +
+                this.Date_fin + "','" +
+                this.Arrondissment_sejour + "','" +
+                this.EstConfirme + "');");
+
+            connection.GetSetConnection.Close();
         }
 
         public string ConfirmationSejourXML()
@@ -146,18 +159,52 @@ namespace Agence_Escapade
 
         public void ConfirmationSejour()
         {
-            //if ( this.SejourRealisable() )
-            //{
-            //    this.BookVoiture();
-            //}
-            //else Console.WriteLine("Sejour irrealisable");
+            ValidationClient validationClient = new ValidationClient(this.IdSejour, this.EstConfirme);
+            string validation = JsonConvert.DeserializeXNode(validationClient.ToString(), "ValidationSejour").ToString();
 
-            this.BookVoiture();
+            string listingPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName;
+
+            Console.WriteLine(ConfirmationSejourXML());
+
+            File.WriteAllText(listingPath + "/ConfirmationSejourNonConfirme.xml", ConfirmationSejourXML());
+
+            Connection connection = new Connection();
+
+            connection.CommandCount("INSERT INTO sejour(idClient,`idLocation`,`theme`,`date_debut`,`date_fin`,`arrondissement_sejour`, confirme) VALUES(" +
+                "(select client.idClient from client where client.nom = '" + this.Client.Nom + "')," +
+                "(select location.idLocation from location where location.immat = '" + this.Location.Voiture.Immat + "'),'" +
+                this.Theme + "','" +
+                this.Date_debut + "','" +
+                this.Date_fin + "','" +
+                this.Arrondissment_sejour + "','" +
+                this.EstConfirme + "');");
+
+            connection.GetSetConnection.Close();
         }
 
         public override string ToString()
         {
             return "[SEJOUR] \n" + JsonConvert.SerializeObject(this, Formatting.Indented) + "\n\n";
+        }
+    }
+
+    public class ValidationClient
+    {
+        private int idSejour;
+        private bool confirmation;
+
+        public ValidationClient(int idSejour, bool confirmation)
+        {
+            this.Confirmation = confirmation;
+            this.IdSejour = idSejour;
+        }
+
+        public int IdSejour { get => idSejour; set => idSejour = value; }
+        public bool Confirmation { get => confirmation; set => confirmation = value; }
+
+        public override string ToString()
+        {
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
     }
 }
