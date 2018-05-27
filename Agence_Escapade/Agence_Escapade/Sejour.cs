@@ -63,6 +63,8 @@ namespace Agence_Escapade
 
         public void BookLogement()
         {
+            Console.WriteLine("Envois requete to RBNP");
+            Console.WriteLine("Reponse from RBNP");
             string listingPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName;
             string rbnp = File.ReadAllText(listingPath + "/RBNP.json");
 
@@ -112,14 +114,30 @@ namespace Agence_Escapade
 
                 MySqlDataReader reader = connection.Command("SELECT * FROM voiture WHERE voiture.idVoiture = (SELECT idVoiture FROM stationnement LIMIT 1);");
 
-                reader.Read();
-                voiture = new Voiture(reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetInt32(5));
-                this.Location = new Location(voiture);
-                this.Location.IdLocation = reader.GetInt32(0);
+                if (reader.Read())
+                {
+                    voiture = new Voiture(reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetInt32(5));
+                    this.Location = new Location(voiture);
+                    this.Location.IdLocation = reader.GetInt32(0);
 
-                Console.WriteLine(Location.ToString());
+                    reader.Close();
 
-                reader.Close();
+                    connection.GetSetConnection.Close();
+
+                    connection.CommandCount("DELETE FROM stationnement WHERE stationnement.idVoiture = (SELECT idVoiture FROM voiture WHERE immat = '" + voiture.Immat + "');");
+
+                    connection.CommandCount("INSERT INTO location (idVoiture) VALUES ( (SELECT idVoiture FROM voiture WHERE immat = '" + voiture.Immat + "'));");
+
+                    Console.WriteLine(Location.ToString());
+
+                    reader.Close();
+
+                    connection.GetSetConnection.Close();
+                }
+                else
+                {
+                    Console.WriteLine("AUCUNE VOITURE DISPO");
+                }
             }
             connection.GetSetConnection.Close();
         }
@@ -139,13 +157,14 @@ namespace Agence_Escapade
 
             Connection connection = new Connection();
 
-            connection.CommandCount("INSERT INTO sejour(idClient,`idLocation`,`theme`,`date_debut`,`date_fin`,`arrondissement_sejour`, confirme) VALUES(" +
+            connection.CommandCount("INSERT INTO sejour(idClient,idLocation,`theme`,`date_debut`,`date_fin`,`arrondissement_sejour`, confirme) VALUES (" +
                 "(select client.idClient from client where client.nom = '" + this.Client.Nom + "')," +
-                "(select location.idLocation from location where location.idVoiture = (select idVoiture from voiture where voiture.immat = '" + this.Location.Voiture.Immat + "')),'" +
+                "(select location.idLocation from location where location.idVoiture = (select idVoiture from voiture where voiture.immat = '" + this.Location.Voiture.Immat + "' LIMIT 1) LIMIT 1),'" +
                 this.Theme + "','" +
-                this.Date_debut + "','" +
-                this.Date_fin + "','" +
-                this.Arrondissment_sejour + "','false');");
+                this.Date_debut.ToString("yyyy-MM-dd HH:mm") + "','" +
+                this.Date_fin.ToString("yyyy-MM-dd HH:mm") + "','" +
+                this.Arrondissment_sejour + "'," +
+                this.EstConfirme.ToString() + ");");
 
             connection.GetSetConnection.Close();
         }
@@ -162,16 +181,18 @@ namespace Agence_Escapade
 
         public void ConfirmationSejour()
         {
+            this.EstConfirme = true;
+
             ValidationClient validationClient = new ValidationClient(this.IdSejour, this.EstConfirme);
             string validation = JsonConvert.DeserializeXNode(validationClient.ToString(), "ValidationSejour").ToString();
 
-            this.EstConfirme = true;
+            Console.WriteLine(validation + "\n\n");
 
             string listingPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName;
 
             Console.WriteLine(ConfirmationSejourXML());
 
-            File.WriteAllText(listingPath + "/ConfirmationSejourNonConfirme.xml", ConfirmationSejourXML());
+            File.WriteAllText(listingPath + "/ConfirmationSejourConfirme.xml", ConfirmationSejourXML());
 
             Connection connection = new Connection();
 

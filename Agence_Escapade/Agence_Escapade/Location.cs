@@ -27,7 +27,7 @@ namespace Agence_Escapade
 
         public override string ToString()
         {
-            return "[LOCATION] \n" + JsonConvert.SerializeObject(this) + "\n\n";
+            return "[LOCATION] \n" + JsonConvert.SerializeObject(this, Formatting.Indented) + "\n\n";
         }
     }
 }

@@ -55,6 +55,10 @@ namespace Agence_Escapade
                 Connection connection = new Connection();
                 connection.Command("INSERT INTO client (nom, prenom, telephone, email) VALUES ('" + this.Nom + "','" + this.Prenom + "','" + this.Telephone + "','" + this.Email + "');");
             }
+            else
+            {
+                Console.WriteLine("Vous etes deja client");
+            }
         }
     }
 }

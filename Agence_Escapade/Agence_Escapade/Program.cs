@@ -17,21 +17,30 @@ namespace Agence_Escapade
             Client c = new Client(1, "Junot", "Gerard", "0", "");
             Sejour sejour = new Sejour(c, "theme", 16, DateTime.Now, DateTime.Now);
 
-            //Console.Write(c.isClient());
-
+            Console.WriteLine("[CHECK CLIENT]\n\n");
             c.CheckClient();
-
-            sejour.BookVoiture();
-            sejour.BookLogement();
-
-            //Console.WriteLine(sejour.CheckVoiture());
-
-            sejour.ConfirmationSejourNonConfirme();
-
-           
-
-            
             Console.ReadKey();
+            Console.Clear();
+
+            Console.WriteLine("[BOOK VOITURE]\n\n");
+            sejour.BookVoiture();
+            Console.ReadKey();
+            Console.Clear();
+
+            Console.WriteLine("[BOOK LOGEMENT]\n\n");
+            sejour.BookLogement();
+            Console.ReadKey();
+            Console.Clear();
+
+            Console.WriteLine("[CONFIRMATION NON CONFIRME]\n\n");
+            sejour.ConfirmationSejourNonConfirme();
+            Console.ReadKey();
+            Console.Clear();
+
+            Console.WriteLine("[VALIDATION SEJOUR]\n\n");
+            sejour.ConfirmationSejour();
+            Console.ReadKey();
+            Console.Clear();
         }
 
         //public static void

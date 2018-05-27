@@ -32,7 +32,7 @@
     <Longitude>2.268171</Longitude>
   </Logement>
   <Theme>theme</Theme>
-  <EstConfirme>false</EstConfirme>
+  <EstConfirme>true</EstConfirme>
   <Note_client>0</Note_client>
   <NbVoyageurs>0</NbVoyageurs>
   <Arrondissment_sejour>16</Arrondissment_sejour>

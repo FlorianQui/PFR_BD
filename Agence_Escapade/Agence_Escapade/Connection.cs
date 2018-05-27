@@ -16,7 +16,7 @@ namespace Agence_Escapade
 
         public Connection()
         {
-            string conStr = "SERVER=localhost;Port=3306;DATABASE=agence_escapade; UID=root; PASSWORD=Flqu970220; SslMode=none";
+            string conStr = "SERVER=localhost;Port=3306; DATABASE=agence_escapade; UID=root; PASSWORD=Flqu970220; SslMode=none";
             this.GetSetConnection = new MySqlConnection(conStr);
         }
 
