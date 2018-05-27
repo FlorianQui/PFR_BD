@@ -19,7 +19,7 @@ namespace Agence_Escapade
 
             //Console.Write(c.isClient());
 
-            //c.CheckClient();
+            c.CheckClient();
 
             sejour.BookVoiture();
             sejour.BookLogement();

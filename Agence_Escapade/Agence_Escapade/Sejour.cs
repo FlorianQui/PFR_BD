@@ -90,6 +90,7 @@ namespace Agence_Escapade
                 Debug.WriteLine("Creation voiture..");
                 voiture = new Voiture(resp.GetString(1), resp.GetString(2), resp.GetString(3), resp.GetString(4), resp.GetInt32(5));
                 this.Location = new Location(voiture);
+                this.Location.IdLocation = resp.GetInt32(0);
 
                 resp.Close();
 
@@ -114,6 +115,9 @@ namespace Agence_Escapade
                 reader.Read();
                 voiture = new Voiture(reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetInt32(5));
                 this.Location = new Location(voiture);
+                this.Location.IdLocation = reader.GetInt32(0);
+
+                Console.WriteLine(Location.ToString());
 
                 reader.Close();
             }
@@ -137,12 +141,11 @@ namespace Agence_Escapade
 
             connection.CommandCount("INSERT INTO sejour(idClient,`idLocation`,`theme`,`date_debut`,`date_fin`,`arrondissement_sejour`, confirme) VALUES(" +
                 "(select client.idClient from client where client.nom = '" + this.Client.Nom + "')," +
-                "(select location.idLocation from location where location.immat = '" + this.Location.Voiture.Immat + "'),'" +
+                "(select location.idLocation from location where location.idVoiture = (select idVoiture from voiture where voiture.immat = '" + this.Location.Voiture.Immat + "')),'" +
                 this.Theme + "','" +
                 this.Date_debut + "','" +
                 this.Date_fin + "','" +
-                this.Arrondissment_sejour + "','" +
-                this.EstConfirme + "');");
+                this.Arrondissment_sejour + "','false');");
 
             connection.GetSetConnection.Close();
         }
@@ -162,6 +165,8 @@ namespace Agence_Escapade
             ValidationClient validationClient = new ValidationClient(this.IdSejour, this.EstConfirme);
             string validation = JsonConvert.DeserializeXNode(validationClient.ToString(), "ValidationSejour").ToString();
 
+            this.EstConfirme = true;
+
             string listingPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName;
 
             Console.WriteLine(ConfirmationSejourXML());
@@ -169,15 +174,6 @@ namespace Agence_Escapade
             File.WriteAllText(listingPath + "/ConfirmationSejourNonConfirme.xml", ConfirmationSejourXML());
 
             Connection connection = new Connection();
-
-            connection.CommandCount("INSERT INTO sejour(idClient,`idLocation`,`theme`,`date_debut`,`date_fin`,`arrondissement_sejour`, confirme) VALUES(" +
-                "(select client.idClient from client where client.nom = '" + this.Client.Nom + "')," +
-                "(select location.idLocation from location where location.immat = '" + this.Location.Voiture.Immat + "'),'" +
-                this.Theme + "','" +
-                this.Date_debut + "','" +
-                this.Date_fin + "','" +
-                this.Arrondissment_sejour + "','" +
-                this.EstConfirme + "');");
 
             connection.GetSetConnection.Close();
         }

@@ -6,7 +6,16 @@
     <Telephone>0</Telephone>
     <Email></Email>
   </Client>
-  <Location />
+  <Location>
+    <IdLocation>1</IdLocation>
+    <Voiture>
+      <NbPlaces>4</NbPlaces>
+      <Immat>75AZ92</Immat>
+      <Marque>Renault</Marque>
+      <Modele>berline</Modele>
+      <Type>Clio</Type>
+    </Voiture>
+  </Location>
   <Logement>
     <host_id>121719</host_id>
     <Room_id>294489</Room_id>
@@ -28,6 +37,6 @@
   <NbVoyageurs>0</NbVoyageurs>
   <Arrondissment_sejour>16</Arrondissment_sejour>
   <IdSejour>0</IdSejour>
-  <Date_debut>2018-05-27T13:07:13.5329212+02:00</Date_debut>
-  <Date_fin>2018-05-27T13:07:13.5399187+02:00</Date_fin>
+  <Date_debut>2018-05-27T14:31:04.8771602+02:00</Date_debut>
+  <Date_fin>2018-05-27T14:31:04.8831437+02:00</Date_fin>
 </Sejour>
